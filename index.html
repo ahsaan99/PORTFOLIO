@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Ahsaan | AI & Full-Stack Developer</title>
 
 <!-- Lenis Smooth Scroll -->
@@ -31,8 +31,12 @@ margin:0;
 background:var(--bg);
 color:var(--text);
 font-family:var(--font-display);
-overflow:hidden;
+overflow-x:hidden;
+overflow-y: auto;
 cursor:crosshair;
+/* Critical for mobile scrolling */
+touch-action: pan-y;
+-webkit-overflow-scrolling: touch;
 }
 
 /* Loading Screen */
@@ -79,8 +83,8 @@ cursor:crosshair;
 .hud-line::after{content:''; position:absolute; right:0; top:-2px; width:5px; height:5px; background:var(--accent);}
 
 /* 3D Scene */
-.viewport{position:fixed; inset:0; perspective:1200px; overflow:hidden;}
-.world{position:absolute; top:50%; left:50%; transform-style:preserve-3d;}
+.viewport{position:fixed; inset:0; perspective:1200px; overflow:hidden; pointer-events: none;}
+.world{position:absolute; top:50%; left:50%; transform-style:preserve-3d; pointer-events: none;}
 .item{position:absolute; left:0; top:0; transform-origin:center; display:flex; align-items:center; justify-content:center; pointer-events: none;}
 
 /* Cards */
@@ -97,7 +101,7 @@ justify-content:flex-start;
 backdrop-filter:blur(10px);
 transition:all 0.3s ease;
 transform:translate(-50%,-50%);
-pointer-events: auto !important; /* Forces card to be interactive */
+pointer-events: auto !important; 
 }
 .card:hover{
 border-color:var(--accent);
@@ -110,7 +114,7 @@ box-shadow:0 0 40px rgba(0, 240, 255, 0.2);
 .tag-container { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; margin-bottom: 10px; }
 .tag { border: 1px solid var(--accent); padding: 3px 8px; font-size: 0.65rem; font-family: var(--font-code); color: var(--accent); background: rgba(0, 240, 255, 0.05); }
 
-/* Links - Critical Fix */
+/* Links */
 .card a {
   color: var(--accent) !important;
   text-decoration: none;
@@ -152,13 +156,16 @@ color: var(--accent);
 
 .big-text{font-size:9vw;font-weight:800;color:transparent;-webkit-text-stroke:2px rgba(0, 240, 255, 0.3);white-space:nowrap;transform:translate(-50%,-50%);letter-spacing:-0.1rem; text-shadow: 0 0 30px rgba(0,240,255,0.1);}
 .star{position:absolute;width:2px;height:2px;background:var(--accent); opacity: 0.5;}
-.scroll-proxy{height:10000vh; position:absolute; width:100%; z-index:-1;}
+.scroll-proxy{height:10000vh; width:100%;}
 
 @media(max-width:768px){
-.card{width:85vw;padding:1.5rem; min-height: 240px;}
-.big-text{font-size:16vw;}
+.card{width:80vw; padding:1.2rem; min-height: 220px;}
+.card h2 { font-size: 1.2rem; }
+.card-header i { font-size: 2rem; }
+.big-text{font-size:14vw; -webkit-text-stroke:1px rgba(0, 240, 255, 0.3);}
 #loader { padding: 1.5rem; }
 .hud { inset: 1rem; font-size: 8px; }
+.hud-line { margin: 0 0.5rem; }
 }
 </style>
 </head>
@@ -190,6 +197,7 @@ color: var(--accent);
 <div class="viewport" id="viewport">
 <div class="world" id="world"></div>
 </div>
+<!-- This div provides the actual height to allow the browser to scroll natively -->
 <div class="scroll-proxy"></div>
 
 <script>
@@ -273,8 +281,8 @@ const items=[];
 
 function init(){
   const isMobile = window.innerWidth < 768;
-  const spreadX = isMobile ? 0.04 : 0.09;
-  const spreadY = isMobile ? 0.06 : 0.09;
+  const spreadX = isMobile ? 0.05 : 0.09;
+  const spreadY = isMobile ? 0.07 : 0.09;
 
   for(let i=0;i<CONFIG.itemCount;i++){
     const el=document.createElement("div");
@@ -311,16 +319,39 @@ function init(){
     state.mouseX=(e.clientX/window.innerWidth-0.5)*2;
     state.mouseY=(e.clientY/window.innerHeight-0.5)*2;
   });
+
+  // Basic touch orientation support for mobile tilt
+  window.addEventListener("touchmove", (e) => {
+    if(e.touches.length > 0) {
+      state.mouseX=(e.touches[0].clientX/window.innerWidth-0.5)*2;
+      state.mouseY=(e.touches[0].clientY/window.innerHeight-0.5)*2;
+    }
+  }, {passive: true});
 }
 init();
 
-const lenis=new Lenis({smooth:true, lerp:0.08});
-lenis.on("scroll",({scroll,velocity})=>{state.scroll=scroll; state.targetSpeed=velocity;});
+// Responsive Lenis configuration
+const lenis=new Lenis({
+    smooth: true, 
+    lerp: 0.1,
+    smoothTouch: true, // Critical for mobile
+    touchMultiplier: 1.5,
+    infinite: false
+});
+
+lenis.on("scroll",({scroll,velocity})=>{
+    state.scroll=scroll; 
+    state.targetSpeed=velocity;
+});
 
 function raf(time){
   lenis.raf(time);
   const delta=time-lastTime; lastTime=time;
-  if(time%10<1) document.getElementById("fps").innerText=Math.round(1000/delta);
+  
+  if(delta > 0 && time%10<1) {
+    document.getElementById("fps").innerText=Math.round(1000/delta);
+  }
+  
   state.velocity+=(state.targetSpeed-state.velocity)*0.1;
   document.getElementById("vel-readout").innerText=Math.abs(state.velocity).toFixed(2);
   document.getElementById("coord").innerText=state.scroll.toFixed(0);
@@ -345,7 +376,8 @@ function raf(time){
     if(alpha<0) alpha=0;
     item.el.style.opacity=alpha;
     
-    if(alpha>0){
+    if(alpha > 0.01){
+      item.el.style.visibility = "visible";
       let trans=`translate3d(${item.x}px,${item.y}px,${vizZ}px)`;
       if(item.type==="star"){ 
           const stretch=Math.max(1,Math.min(1+Math.abs(state.velocity)*0.12,8)); 
@@ -354,6 +386,8 @@ function raf(time){
           trans+=` rotateZ(${item.rot}deg)`;
       }
       item.el.style.transform=trans;
+    } else {
+      item.el.style.visibility = "hidden";
     }
   });
   requestAnimationFrame(raf);
@@ -361,6 +395,7 @@ function raf(time){
 let lastTime=0;
 requestAnimationFrame(raf);
 
+// Reset scroll on load
 window.scrollTo(0,0);
 </script>
 </body>
