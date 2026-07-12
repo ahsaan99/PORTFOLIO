@@ -14,9 +14,9 @@
 <img src="https://img.shields.io/badge/Focus-AI%20%26%20Robotics-302b63?style=for-the-badge" />
 <img src="https://img.shields.io/badge/License-All%20Rights%20Reserved-black?style=for-the-badge" />
 
-<br/><br/>
 
-<img src="https://komarev.com/ghpvc/?username=ahsaan-portfolio&label=Profile%20Views&color=e94560&style=for-the-badge" />
+
+
 
 </div>
 
