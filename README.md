@@ -2,7 +2,7 @@
 
 <!-- Animated header -->
 <img width="100%" src="https://capsule-render.vercel.app/api?type=rounded&color=0:0f0c29,50:302b63,100:e94560&height=230&section=header&text=Ahsaan,MohamedS.S.&fontSize=56&fontColor=FFFFFF&animation=fadeIn&fontAlignY=32&desc=Developer%20%7C%20Builder%20%7C%20Innovator&descAlignY=58&descSize=18&descColor=e94560" />
-
+ 
 <!-- Animated typing subtitle -->
 <a href="#">
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=22&duration=3000&pause=800&color=E94560&center=true&vCenter=true&width=650&lines=Building+Real-World+Tech+Projects...;Coding+%7C+Electronics+%7C+AI+%7C+Robotics;Turning+Ideas+Into+Working+Prototypes+%F0%9F%9A%80" alt="Typing SVG" />
