@@ -1,7 +1,7 @@
 <div align="center">
 
 <!-- Animated header -->
-<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:0f0c29,50:302b63,100:e94560&height=250&section=header&text=Ahsaan%20Mohamed%20S.S.&fontSize=54&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=AI%20Developer%20%7C%20Robotics%20%7C%20Computer%20Vision%20%7C%20Innovation&descAlignY=62&descSize=18&descColor=00F5FF" />
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rounded&color=0:0f0c29,50:302b63,100:e94560&height=230&section=header&text=Ahsaan%0AMohamed%20S.S.&fontSize=52&fontColor=FFFFFF&animation=fadeIn&fontAlignY=35&desc=Developer%20%7C%20Builder%20%7C%20Innovator&descAlignY=62&descSize=18&descColor=e94560" />
  
 <!-- Animated typing subtitle -->
 <a href="#">
